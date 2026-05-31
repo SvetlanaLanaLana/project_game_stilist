@@ -667,16 +667,23 @@ body {
 /* PDF и печать */
 .pdf-container {
   position: fixed;
-  left: -9999px;
+  left: 0;
   top: 0;
-  width: 190mm;
-  background: #fff;
+  width: 794px;
+  z-index: -1;
+  pointer-events: none;
+  background: #ffffff;
 }
 
 .pdf-sheet {
+  animation: none !important;
+  opacity: 1 !important;
+  transform: none !important;
   box-shadow: none;
   max-width: none;
   padding: 1.5rem;
+  background: #ffffff !important;
+  color: #2c2826;
 }
 
 .pdf-sheet .result-layout {
@@ -686,20 +693,48 @@ body {
 }
 
 .pdf-sheet .result-photo {
-  flex: 0 0 45%;
-  max-width: 45%;
+  flex: 0 0 42%;
+  max-width: 42%;
+  background: #ffffff;
 }
 
 .pdf-sheet .result-image {
   max-height: none;
+  opacity: 1 !important;
+}
+
+.pdf-sheet .result-title {
+  color: #2c2826;
+}
+
+.pdf-sheet .result-source {
+  color: #b87d7d;
+}
+
+.pdf-sheet .result-desc {
+  color: #5c5652;
+  font-weight: 400;
+}
+
+.pdf-sheet .result-detail {
+  background: #faf7f4;
+}
+
+.pdf-sheet .result-detail p {
+  color: #2c2826;
+}
+
+.pdf-sheet .tag {
+  color: #5c5652;
+  background: #f5e6e0;
 }
 
 .pdf-footer {
   margin-top: 1.5rem;
   text-align: center;
   font-size: 0.75rem;
-  color: var(--charcoal-soft);
-  border-top: 1px solid var(--blush);
+  color: #5c5652;
+  border-top: 1px solid #f5e6e0;
   padding-top: 1rem;
 }
 

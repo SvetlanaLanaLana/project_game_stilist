@@ -593,6 +593,21 @@ function renderResult() {
   });
 }
 
+async function waitForPdfImage(card) {
+  const img = card.querySelector('.result-image');
+  if (!img) return;
+
+  if (!img.complete) {
+    await new Promise(resolve => {
+      img.addEventListener('load', resolve, { once: true });
+      img.addEventListener('error', resolve, { once: true });
+      setTimeout(resolve, 5000);
+    });
+  }
+
+  await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+}
+
 async function downloadPdf(result) {
   const btn = document.getElementById('pdfBtn');
   const originalText = btn.textContent;
@@ -607,12 +622,22 @@ async function downloadPdf(result) {
   const card = container.querySelector('#resultCard');
 
   try {
+    await waitForPdfImage(card);
+
     if (typeof html2pdf !== 'undefined') {
       await html2pdf().set({
-        margin: [12, 12, 12, 12],
+        margin: [10, 10, 10, 10],
         filename: `образ-${result.title.replace(/\s+/g, '-').toLowerCase()}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, logging: false },
+        image: { type: 'jpeg', quality: 0.95 },
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          allowTaint: true,
+          logging: false,
+          backgroundColor: '#ffffff',
+          scrollX: 0,
+          scrollY: -window.scrollY,
+        },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
         pagebreak: { mode: ['avoid-all', 'css', 'legacy'] },
       }).from(card).save();
