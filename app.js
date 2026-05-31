@@ -536,6 +536,11 @@ function buildResultHtml(result, { forPrint = false } = {}) {
           ${result.sourceLabel ? `<p class="result-source">Стиль: ${result.styleLabel || result.sourceLabel}${result.colorLabel ? ` · ${result.colorLabel}` : ''}</p>` : ''}
           <p class="result-desc">${result.description}</p>
 
+          <div class="result-recommendations">
+            <h3 class="result-recommendations-heading">Что можно добавить к образу</h3>
+            <p class="result-recommendations-note">Рекомендации по выбранному стилю</p>
+          </div>
+
           <div class="result-details">
             <div class="result-detail">
               <h3>Одежда</h3>

@@ -526,8 +526,32 @@ body {
   color: var(--charcoal-soft);
   font-weight: 300;
   font-size: 1rem;
-  margin-bottom: 1.75rem;
+  margin-bottom: 1.5rem;
   line-height: 1.7;
+}
+
+.result-recommendations {
+  margin-bottom: 1rem;
+  padding-top: 0.25rem;
+  border-top: 1px solid var(--blush);
+}
+
+.result-recommendations-heading {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--charcoal);
+  text-align: center;
+  margin-bottom: 0.35rem;
+}
+
+.result-recommendations-note {
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--charcoal-soft);
+  letter-spacing: 0.02em;
+  margin-bottom: 1rem;
+  line-height: 1.5;
 }
 
 .result-details {
@@ -713,6 +737,14 @@ body {
 .pdf-sheet .result-desc {
   color: #5c5652;
   font-weight: 400;
+}
+
+.pdf-sheet .result-recommendations-heading {
+  color: #2c2826;
+}
+
+.pdf-sheet .result-recommendations-note {
+  color: #5c5652;
 }
 
 .pdf-sheet .result-detail {
