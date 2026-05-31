@@ -561,7 +561,7 @@ function buildResultHtml(result, { forPrint = false } = {}) {
             </p>
           ` : `
             <div class="btn-group${actionsClass}">
-              <button type="button" class="btn btn-primary" id="pdfBtn">Сохранить PDF</button>
+              <button type="button" class="btn btn-primary" id="pdfBtn">Скачать PDF</button>
               <button type="button" class="btn btn-secondary" id="restartBtn">Пройти заново</button>
             </div>
           `}
@@ -608,6 +608,31 @@ async function waitForPdfImage(card) {
   await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
 }
 
+async function embedImageForPdf(card) {
+  const img = card.querySelector('.result-image');
+  if (!img?.src || img.src.startsWith('data:')) return;
+
+  const dataUrl = await new Promise(resolve => {
+    const loader = new Image();
+    loader.onload = () => {
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = loader.naturalWidth;
+        canvas.height = loader.naturalHeight;
+        canvas.getContext('2d').drawImage(loader, 0, 0);
+        resolve(canvas.toDataURL('image/jpeg', 0.92));
+      } catch {
+        resolve(img.src);
+      }
+    };
+    loader.onerror = () => resolve(img.src);
+    loader.src = img.src;
+  });
+
+  img.src = dataUrl;
+  await waitForPdfImage(card);
+}
+
 async function downloadPdf(result) {
   const btn = document.getElementById('pdfBtn');
   const originalText = btn.textContent;
@@ -622,34 +647,40 @@ async function downloadPdf(result) {
   const card = container.querySelector('#resultCard');
 
   try {
-    await waitForPdfImage(card);
-
-    if (typeof html2pdf !== 'undefined') {
-      await html2pdf().set({
-        margin: [10, 10, 10, 10],
-        filename: `образ-${result.title.replace(/\s+/g, '-').toLowerCase()}.pdf`,
-        image: { type: 'jpeg', quality: 0.95 },
-        html2canvas: {
-          scale: 2,
-          useCORS: true,
-          allowTaint: true,
-          logging: false,
-          backgroundColor: '#ffffff',
-          scrollX: 0,
-          scrollY: -window.scrollY,
-        },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] },
-      }).from(card).save();
-    } else {
-      window.print();
+    if (typeof html2pdf === 'undefined') {
+      throw new Error('Библиотека PDF не загружена');
     }
-  } catch {
-    window.print();
+
+    await waitForPdfImage(card);
+    await embedImageForPdf(card);
+
+    await html2pdf().set({
+      margin: [10, 10, 10, 10],
+      filename: `образ-${result.title.replace(/\s+/g, '-').toLowerCase()}.pdf`,
+      image: { type: 'jpeg', quality: 0.95 },
+      html2canvas: {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        logging: false,
+        backgroundColor: '#ffffff',
+        scrollX: 0,
+        scrollY: 0,
+      },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] },
+    }).from(card).save();
+
+    btn.textContent = 'PDF скачан';
+  } catch (err) {
+    console.error(err);
+    btn.textContent = 'Не удалось скачать PDF';
   } finally {
     container.remove();
-    btn.textContent = originalText;
     btn.disabled = false;
+    setTimeout(() => {
+      btn.textContent = originalText;
+    }, 2500);
   }
 }
 

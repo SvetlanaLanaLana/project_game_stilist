@@ -667,10 +667,9 @@ body {
 /* PDF и печать */
 .pdf-container {
   position: fixed;
-  left: 0;
+  left: -10000px;
   top: 0;
   width: 794px;
-  z-index: -1;
   pointer-events: none;
   background: #ffffff;
 }
