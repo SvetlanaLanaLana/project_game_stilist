@@ -686,7 +686,7 @@ body.pdf-export .bg-pattern,
 body.pdf-export .header,
 body.pdf-export .footer,
 body.pdf-export .btn-group {
-  visibility: hidden !important;
+  display: none !important;
 }
 
 body.pdf-export .main {
