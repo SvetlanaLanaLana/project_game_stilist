@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url';
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const imagesDir = path.join(root, 'images');
 
-const STYLE_FOLDERS = ['klassika', 'romantika', 'dramatik'];
+const STYLE_FOLDERS = ['klassika', 'romantika', 'dramatik', 'спорт', 'этника'];
 const IMAGE_EXT = /\.(jpg|jpeg|png|webp)$/i;
 
 function sortByNumber(files) {
@@ -57,7 +57,7 @@ for (const [folder, items] of Object.entries(gallery)) {
   compactGallery[folder] = items.map(({ file, data }) => ({ file, data }));
 }
 
-const output = `// Сгенерировано из папок images/klassika, romantika, dramatik
+const output = `// Сгенерировано из папок images/
 // Пересобрать: node scripts/build-gallery.mjs
 
 const STYLE_GALLERY = ${JSON.stringify(compactGallery, null, 2)};
@@ -66,6 +66,8 @@ const STYLE_FOLDER_LABELS = {
   klassika: 'Классический стиль',
   romantika: 'Романтический стиль',
   dramatik: 'Драматический стиль',
+  'спорт': 'Спортивный стиль',
+  'этника': 'Этнический стиль',
 };
 
 const COLOR_LABELS = {
@@ -73,13 +75,6 @@ const COLOR_LABELS = {
   warm: 'Тёплая палитра',
   cool: 'Холодная палитра',
   bright: 'Яркая палитра',
-};
-
-const QUIZ_STYLE_LABELS = {
-  classic: 'Классика',
-  romantic: 'Романтика',
-  minimal: 'Минимализм',
-  bold: 'Смелый / трендовый',
 };
 `;
 

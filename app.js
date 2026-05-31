@@ -150,6 +150,49 @@ const DEFAULT_RESULT = {
   tags: ['#ваш_стиль', '#образ', '#уникальность', '#стиль'],
 };
 
+const FOLDER_PROFILES = {
+  klassika: {
+    title: 'Классическая элегантность',
+    description: 'Безупречный деловой образ в нейтральных оттенках — костюм, жакет или комплект прямого кроя для уверенного и собранного вида.',
+    outfit: 'Пиджак или жакет прямого кроя, брюки или юбка-карандаш, блуза или топ, лаконичные туфли на каблуке.',
+    beauty: 'Матовая кожа, nude-помада, лёгкая стрелка, собранные волосы или аккуратный пучок.',
+    accessories: 'Структурированная сумка, тонкие золотые украшения, классические часы.',
+    tags: ['#классика', '#деловой', '#элегантность', '#костюм'],
+  },
+  romantika: {
+    title: 'Романтичный образ',
+    description: 'Нежный женственный look с мягкими линиями и воздушными тканями — идеален для свидания, вечера и особых случаев.',
+    outfit: 'Платье или юбка миди из лёгкой ткани, блуза с рукавами, каблуки или изящные сандалии.',
+    beauty: 'Сияющая кожа, розовая или ягодная помада, мягкие локоны, перламутровый хайлайтер.',
+    accessories: 'Жемчужные или кристальные серьги, миниатюрная сумочка, тонкий пояс.',
+    tags: ['#романтика', '#нежность', '#вечер', '#женственность'],
+  },
+  dramatik: {
+    title: 'Смелый драматичный образ',
+    description: 'Выразительный look с характером — контрастные силуэты, насыщенные цвета и акцентные детали для тех, кто любит быть заметной.',
+    outfit: 'Платье или комплект с необычным кроем, кожаные элементы, каблуки или массивные ботинки.',
+    beauty: 'Смелый макияж глаз или губ, сияющая кожа, объёмная укладка или гладкие прямые волосы.',
+    accessories: 'Крупные серьги, клатч необычной формы, массивные кольца или ремень.',
+    tags: ['#драма', '#акцент', '#смелость', '#тренды'],
+  },
+  'спорт': {
+    title: 'Спортивный шик',
+    description: 'Комфортный повседневный образ в спортивно-элегантном ключе — удобство и стиль для активного дня.',
+    outfit: 'Леггинсы или джоггеры, худи или свитшот, кроссовки, лёгкая куртка или бомбер.',
+    beauty: 'Естественный макияж, увлажнённая кожа, блеск для губ, высокий хвост или небрежный пучок.',
+    accessories: 'Рюкзак или кросс-боди, кепка или бейсболка, минимальные украшения.',
+    tags: ['#спорт', '#комфорт', '#повседневный', '#активный'],
+  },
+  'этника': {
+    title: 'Этнический стиль',
+    description: 'Свободный bohemian-look с этническими мотивами, натуральными тканями и расслабленным настроением.',
+    outfit: 'Свободное платье или юбка с принтом, льняная блуза, сандалии или мягкие сапоги, накидка или кардиган.',
+    beauty: 'Лёгкий загар, бронзер, натуральные тона помады, распущенные волосы или лёгкие волны.',
+    accessories: 'Деревянные или серебряные украшения, плетёная сумка, шарф или пояс с этническим орнаментом.',
+    tags: ['#этника', '#boho', '#свобода', '#натуральность'],
+  },
+};
+
 const state = {
   screen: 'welcome',
   step: 0,
@@ -354,45 +397,108 @@ function enrichResult(result, answers = {}) {
     return { ...result, fallbackImage: result.image };
   }
 
+  const profile = FOLDER_PROFILES[photo.folder] || {};
+  const folderLabel = STYLE_FOLDER_LABELS?.[photo.folder] || photo.folder;
+  const colorLabel = COLOR_LABELS?.[answers.colors] || '';
+
   return {
     ...result,
+    title: profile.title || result.title,
+    description: profile.description || result.description,
+    outfit: profile.outfit || result.outfit,
+    beauty: profile.beauty || result.beauty,
+    accessories: profile.accessories || result.accessories,
+    tags: profile.tags || result.tags,
     image: photo.image,
     fallbackImage: result.image,
-    imageAlt: `${result.title} — ${photo.styleLabel}, ${photo.colorLabel}`,
-    sourceLabel: photo.folderLabel,
-    colorLabel: photo.colorLabel,
-    styleLabel: photo.styleLabel,
+    imageAlt: `${profile.title || result.title} — ${folderLabel}`,
+    sourceLabel: folderLabel,
+    colorLabel,
+    styleLabel: folderLabel,
+    photoFolder: photo.folder,
   };
+}
+
+function getPhotoFolders(answers) {
+  const { event, style, colors, mood, priority } = answers;
+
+  if (event === 'date' || event === 'party') {
+    return ['romantika'];
+  }
+
+  if (event === 'casual') {
+    if (style === 'bold' || priority === 'statement' || colors === 'bright') {
+      return ['dramatik'];
+    }
+    if (style === 'minimal' || priority === 'comfort' || mood === 'fresh') {
+      return ['спорт'];
+    }
+    if (style === 'romantic' || colors === 'warm' || mood === 'soft') {
+      return ['этника'];
+    }
+    if (style === 'classic') {
+      return ['этника', 'спорт', 'dramatik'];
+    }
+    if (mood === 'mysterious' || colors === 'cool') {
+      return ['dramatik'];
+    }
+    return ['спорт', 'этника', 'dramatik'];
+  }
+
+  if (style === 'classic') {
+    return ['klassika', 'romantika'];
+  }
+  if (style === 'romantic') {
+    return ['romantika'];
+  }
+  if (style === 'bold') {
+    return ['dramatik'];
+  }
+  if (style === 'minimal') {
+    return event === 'work' ? ['klassika'] : ['спорт', 'klassika'];
+  }
+
+  if (event === 'work') {
+    return ['klassika'];
+  }
+
+  return ['klassika', 'romantika'];
 }
 
 function pickStylePhoto(answers) {
   if (typeof STYLE_GALLERY === 'undefined') return null;
 
-  const STYLE_FOLDER = {
-    classic: 'klassika',
-    romantic: 'romantika',
-    minimal: 'klassika',
-    bold: 'dramatik',
-  };
-
   const COLOR_INDEX = { neutral: 0, warm: 1, cool: 2, bright: 3 };
-  const STYLE_OFFSET = { classic: 0, romantic: 0, minimal: 4, bold: 0 };
+  const MOOD_OFFSET = { confident: 0, soft: 1, mysterious: 2, fresh: 3 };
+  const PRIORITY_OFFSET = { comfort: 0, statement: 1, versatile: 2, quality: 3 };
 
-  const style = answers.style || 'classic';
+  const folders = getPhotoFolders(answers);
+  const pool = [];
+
+  for (const folder of folders) {
+    const items = STYLE_GALLERY[folder];
+    if (!items?.length) continue;
+    for (const item of items) {
+      pool.push({ ...item, folder });
+    }
+  }
+
+  if (!pool.length) return null;
+
   const colors = answers.colors || 'neutral';
-  const folder = STYLE_FOLDER[style] || 'klassika';
-  const items = STYLE_GALLERY[folder];
+  const mood = answers.mood || 'confident';
+  const priority = answers.priority || 'comfort';
+  const idx = (
+    (COLOR_INDEX[colors] || 0)
+    + (MOOD_OFFSET[mood] || 0)
+    + (PRIORITY_OFFSET[priority] || 0)
+  ) % pool.length;
 
-  if (!items?.length) return null;
-
-  const idx = ((STYLE_OFFSET[style] || 0) + (COLOR_INDEX[colors] || 0)) % items.length;
-  const item = items[idx];
+  const picked = pool[idx];
 
   return {
-    image: item.data,
-    folderLabel: STYLE_FOLDER_LABELS?.[folder] || folder,
-    colorLabel: COLOR_LABELS?.[colors] || colors,
-    styleLabel: QUIZ_STYLE_LABELS?.[style] || style,
+    image: picked.data,
+    folder: picked.folder,
   };
 }
 
@@ -418,7 +524,7 @@ function buildResultHtml(result, { forPrint = false } = {}) {
           <span class="result-badge">Ваш идеальный образ</span>
 
           <h2 class="result-title">${result.title}</h2>
-          ${result.sourceLabel ? `<p class="result-source">Стиль: ${result.styleLabel || result.sourceLabel} · ${result.colorLabel || ''}</p>` : ''}
+          ${result.sourceLabel ? `<p class="result-source">Стиль: ${result.styleLabel || result.sourceLabel}${result.colorLabel ? ` · ${result.colorLabel}` : ''}</p>` : ''}
           <p class="result-desc">${result.description}</p>
 
           <div class="result-details">
