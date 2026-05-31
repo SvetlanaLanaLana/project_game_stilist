@@ -201,7 +201,7 @@ function getResultKey(answers) {
 
 function renderWelcome() {
   app.innerHTML = `
-    <div class="card">
+    <div class="card card--quiz">
       <div class="welcome-icon">✦</div>
       <h1>Выбери идеальный образ</h1>
       <p class="subtitle">Ответьте на 5 коротких вопросов — и мы подберём образ, который отражает ваш стиль, настроение и повод</p>
@@ -226,7 +226,7 @@ function renderQuestion() {
   const progress = ((state.step + 1) / QUESTIONS.length) * 100;
 
   app.innerHTML = `
-    <div class="card">
+    <div class="card card--quiz">
       <div class="progress-wrap">
         <div class="progress-meta">
           <span>Вопрос ${state.step + 1} из ${QUESTIONS.length}</span>
@@ -240,11 +240,11 @@ function renderQuestion() {
       <p class="question-label">${q.label}</p>
       <h2 class="question-text">${q.text}</h2>
 
-      <div class="options" role="radiogroup" aria-label="${q.text}">
+      <div class="options options--grid" role="radiogroup" aria-label="${q.text}">
         ${q.options.map(opt => `
           <button
             type="button"
-            class="option ${state.selected === opt.value ? 'selected' : ''}"
+            class="option option--tile ${state.selected === opt.value ? 'selected' : ''}"
             data-value="${opt.value}"
             role="radio"
             aria-checked="${state.selected === opt.value}"
@@ -347,20 +347,52 @@ function scrollToTop() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function enrichResult(result, resultKey) {
-  const assets = (typeof STYLE_ASSETS !== 'undefined' && STYLE_ASSETS[resultKey])
-    || (typeof STYLE_ASSETS !== 'undefined' && STYLE_ASSETS.default)
-    || null;
+function enrichResult(result, answers = {}) {
+  const photo = pickStylePhoto(answers);
 
-  if (!assets?.image) return { ...result, fallbackImage: result.image };
+  if (!photo?.image) {
+    return { ...result, fallbackImage: result.image };
+  }
 
   return {
     ...result,
-    image: assets.image,
+    image: photo.image,
     fallbackImage: result.image,
-    imageAlt: `${result.title} — ${assets.sourceLabel || 'стиль'}`,
-    sourceLabel: assets.sourceLabel || '',
-    sourcePdf: assets.sourcePdf || '',
+    imageAlt: `${result.title} — ${photo.styleLabel}, ${photo.colorLabel}`,
+    sourceLabel: photo.folderLabel,
+    colorLabel: photo.colorLabel,
+    styleLabel: photo.styleLabel,
+  };
+}
+
+function pickStylePhoto(answers) {
+  if (typeof STYLE_GALLERY === 'undefined') return null;
+
+  const STYLE_FOLDER = {
+    classic: 'klassika',
+    romantic: 'romantika',
+    minimal: 'klassika',
+    bold: 'dramatik',
+  };
+
+  const COLOR_INDEX = { neutral: 0, warm: 1, cool: 2, bright: 3 };
+  const STYLE_OFFSET = { classic: 0, romantic: 0, minimal: 4, bold: 0 };
+
+  const style = answers.style || 'classic';
+  const colors = answers.colors || 'neutral';
+  const folder = STYLE_FOLDER[style] || 'klassika';
+  const items = STYLE_GALLERY[folder];
+
+  if (!items?.length) return null;
+
+  const idx = ((STYLE_OFFSET[style] || 0) + (COLOR_INDEX[colors] || 0)) % items.length;
+  const item = items[idx];
+
+  return {
+    image: item.data,
+    folderLabel: STYLE_FOLDER_LABELS?.[folder] || folder,
+    colorLabel: COLOR_LABELS?.[colors] || colors,
+    styleLabel: QUIZ_STYLE_LABELS?.[style] || style,
   };
 }
 
@@ -370,60 +402,57 @@ function buildResultHtml(result, { forPrint = false } = {}) {
 
   return `
     <div class="card card--result${printClass}" id="resultCard">
-      <div style="text-align: center">
-        <span class="result-badge">Ваш идеальный образ</span>
-      </div>
+      <div class="result-layout">
+        <div class="result-photo">
+          <img
+            class="result-image"
+            src="${result.image}"
+            alt="${result.imageAlt}"
+            loading="eager"
+            onerror="if(this.dataset.fallback && this.src!==this.dataset.fallback){this.src=this.dataset.fallback;}"
+            data-fallback="${result.fallbackImage || ''}"
+          >
+        </div>
 
-      <div class="result-visual">
-        <img
-          class="result-image"
-          src="${result.image}"
-          alt="${result.imageAlt}"
-          width="900"
-          height="560"
-          loading="eager"
-          onerror="if(this.dataset.fallback && this.src!==this.dataset.fallback){this.src=this.dataset.fallback;}"
-          data-fallback="${result.fallbackImage || ''}"
-        >
-        <div class="result-visual-overlay">
-          <div class="result-visual-label">${result.title}</div>
+        <div class="result-content">
+          <span class="result-badge">Ваш идеальный образ</span>
+
+          <h2 class="result-title">${result.title}</h2>
+          ${result.sourceLabel ? `<p class="result-source">Стиль: ${result.styleLabel || result.sourceLabel} · ${result.colorLabel || ''}</p>` : ''}
+          <p class="result-desc">${result.description}</p>
+
+          <div class="result-details">
+            <div class="result-detail">
+              <h3>Одежда</h3>
+              <p>${result.outfit}</p>
+            </div>
+            <div class="result-detail">
+              <h3>Красота</h3>
+              <p>${result.beauty}</p>
+            </div>
+            <div class="result-detail">
+              <h3>Аксессуары</h3>
+              <p>${result.accessories}</p>
+            </div>
+          </div>
+
+          <div class="result-tags">
+            ${result.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+          </div>
+
+          ${forPrint ? `
+            <p class="pdf-footer">
+              StyleLab · Ваш персональный стилист · ${new Date().toLocaleDateString('ru-RU')}
+            </p>
+          ` : `
+            <div class="btn-group${actionsClass}">
+              <button type="button" class="btn btn-primary" id="pdfBtn">Сохранить PDF</button>
+              <button type="button" class="btn btn-secondary" id="restartBtn">Пройти заново</button>
+              <button type="button" class="btn btn-ghost" id="shareBtn">Поделиться результатом</button>
+            </div>
+          `}
         </div>
       </div>
-
-      <h2 class="result-title">${result.title}</h2>
-      ${result.sourceLabel ? `<p class="result-source">По материалам: «${result.sourceLabel}»</p>` : ''}
-      <p class="result-desc">${result.description}</p>
-
-      <div class="result-details">
-        <div class="result-detail">
-          <h3>Одежда</h3>
-          <p>${result.outfit}</p>
-        </div>
-        <div class="result-detail">
-          <h3>Красота</h3>
-          <p>${result.beauty}</p>
-        </div>
-        <div class="result-detail">
-          <h3>Аксессуары</h3>
-          <p>${result.accessories}</p>
-        </div>
-      </div>
-
-      <div class="result-tags">
-        ${result.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
-      </div>
-
-      ${forPrint ? `
-        <p class="pdf-footer">
-          StyleLab · Ваш персональный стилист · ${new Date().toLocaleDateString('ru-RU')}
-        </p>
-      ` : `
-        <div class="btn-group${actionsClass}">
-          <button type="button" class="btn btn-primary" id="pdfBtn">Сохранить PDF</button>
-          <button type="button" class="btn btn-secondary" id="restartBtn">Пройти заново</button>
-          <button type="button" class="btn btn-ghost" id="shareBtn">Поделиться результатом</button>
-        </div>
-      `}
     </div>
   `;
 }
@@ -434,7 +463,7 @@ function renderResult() {
 
   const key = getResultKey(state.answers);
   const baseResult = RESULTS[key] || DEFAULT_RESULT;
-  const result = enrichResult(baseResult, key);
+  const result = enrichResult(baseResult, state.answers);
   state.currentResult = result;
 
   app.innerHTML = buildResultHtml(result);

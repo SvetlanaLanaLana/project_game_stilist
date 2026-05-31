@@ -118,12 +118,20 @@ body {
 /* Card */
 .card {
   width: 100%;
-  max-width: 560px;
   background: var(--white);
   border-radius: var(--radius);
   box-shadow: 0 4px 24px var(--shadow), 0 1px 3px var(--shadow);
   padding: clamp(1.75rem, 5vw, 2.75rem);
   animation: fadeUp 0.5s ease-out;
+}
+
+.card--quiz {
+  max-width: 420px;
+}
+
+.card--result {
+  max-width: 920px;
+  padding: clamp(1.25rem, 3vw, 2rem);
 }
 
 @keyframes fadeUp {
@@ -137,8 +145,42 @@ body {
   }
 }
 
-.card--result {
-  max-width: 620px;
+/* Options grid — компактный формат квиза */
+.options--grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem;
+}
+
+.option--tile {
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.65rem;
+  padding: 1rem 0.75rem;
+  min-height: 100%;
+}
+
+.option--tile:hover {
+  transform: translateY(-2px);
+}
+
+.option--tile .option-icon {
+  width: 48px;
+  height: 48px;
+  font-size: 1.35rem;
+}
+
+.option--tile .option-text strong {
+  font-size: 0.88rem;
+  line-height: 1.25;
+}
+
+.option--tile .option-text span {
+  font-size: 0.75rem;
+  line-height: 1.35;
+  display: block;
+  margin-top: 0.2rem;
 }
 
 /* Welcome */
@@ -416,9 +458,37 @@ body {
   color: var(--charcoal);
 }
 
-/* Result */
+/* Result — вертикальные фото в полном виде */
+.result-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.result-photo {
+  width: 100%;
+  max-width: 360px;
+  margin: 0 auto;
+  background: var(--cream);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  line-height: 0;
+}
+
+.result-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+  object-position: center top;
+}
+
+.result-content {
+  flex: 1;
+  min-width: 0;
+}
+
 .result-badge {
-  display: inline-block;
   padding: 0.35rem 1rem;
   background: linear-gradient(135deg, var(--blush), var(--gold-light));
   border-radius: 50px;
@@ -426,40 +496,13 @@ body {
   letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--charcoal-soft);
-  margin-bottom: 1rem;
 }
 
-.result-visual {
-  width: 100%;
-  aspect-ratio: 16 / 10;
-  border-radius: var(--radius-sm);
-  margin-bottom: 1.75rem;
-  position: relative;
-  overflow: hidden;
-}
-
-.result-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.result-content .result-badge {
   display: block;
-}
-
-.result-visual-overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: flex-end;
-  padding: 1.5rem;
-  background: linear-gradient(to top, rgba(44, 40, 38, 0.55) 0%, transparent 55%);
-}
-
-.result-visual-label {
-  font-family: var(--font-display);
-  font-size: clamp(1.25rem, 3vw, 1.75rem);
-  font-weight: 600;
-  color: var(--white);
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  text-align: center;
+  width: fit-content;
+  margin: 0 auto 1rem;
 }
 
 .result-title {
@@ -558,6 +601,20 @@ body {
     padding: 1.5rem;
   }
 
+  .card--quiz {
+    max-width: 100%;
+  }
+
+  .options--grid {
+    grid-template-columns: 1fr;
+  }
+
+  .option--tile {
+    flex-direction: row;
+    text-align: left;
+    padding: 0.85rem 1rem;
+  }
+
   .option {
     padding: 0.85rem 1rem;
   }
@@ -567,11 +624,43 @@ body {
     height: 40px;
     font-size: 1.1rem;
   }
+
+  .result-photo {
+    max-width: 100%;
+  }
 }
 
 @media (min-width: 768px) {
+  .result-layout {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 2rem;
+  }
+
+  .result-photo {
+    flex: 0 0 min(360px, 42%);
+    max-width: 360px;
+    margin: 0;
+    position: sticky;
+    top: 1.5rem;
+  }
+
+  .result-image {
+    max-height: calc(100vh - 4rem);
+  }
+
+  .result-details {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 900px) {
   .result-details {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .result-detail:last-child {
+    grid-column: 1 / -1;
   }
 }
 
@@ -588,6 +677,21 @@ body {
   box-shadow: none;
   max-width: none;
   padding: 1.5rem;
+}
+
+.pdf-sheet .result-layout {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 1.25rem;
+}
+
+.pdf-sheet .result-photo {
+  flex: 0 0 45%;
+  max-width: 45%;
+}
+
+.pdf-sheet .result-image {
+  max-height: none;
 }
 
 .pdf-footer {
