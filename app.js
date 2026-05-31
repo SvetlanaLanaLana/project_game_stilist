@@ -537,8 +537,7 @@ function buildResultHtml(result, { forPrint = false } = {}) {
           <p class="result-desc">${result.description}</p>
 
           <div class="result-recommendations">
-            <h3 class="result-recommendations-heading">Что можно добавить к образу</h3>
-            <p class="result-recommendations-note">Рекомендации по выбранному стилю</p>
+            <h3 class="result-recommendations-heading">Общие идеи для вашего образа по выбранному стилю</h3>
           </div>
 
           <div class="result-details">
@@ -598,11 +597,17 @@ function renderResult() {
   });
 }
 
-async function waitForPdfImage(card) {
-  const img = card.querySelector('.result-image');
-  if (!img) return;
+async function downloadPdf(result) {
+  const card = document.getElementById('resultCard');
+  const btn = document.getElementById('pdfBtn');
+  if (!card || !btn) return;
 
-  if (!img.complete) {
+  const originalText = btn.textContent;
+  btn.textContent = 'Готовим PDF…';
+  btn.disabled = true;
+
+  const img = card.querySelector('.result-image');
+  if (img && !img.complete) {
     await new Promise(resolve => {
       img.addEventListener('load', resolve, { once: true });
       img.addEventListener('error', resolve, { once: true });
@@ -610,54 +615,15 @@ async function waitForPdfImage(card) {
     });
   }
 
-  await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-}
-
-async function embedImageForPdf(card) {
-  const img = card.querySelector('.result-image');
-  if (!img?.src || img.src.startsWith('data:')) return;
-
-  const dataUrl = await new Promise(resolve => {
-    const loader = new Image();
-    loader.onload = () => {
-      try {
-        const canvas = document.createElement('canvas');
-        canvas.width = loader.naturalWidth;
-        canvas.height = loader.naturalHeight;
-        canvas.getContext('2d').drawImage(loader, 0, 0);
-        resolve(canvas.toDataURL('image/jpeg', 0.92));
-      } catch {
-        resolve(img.src);
-      }
-    };
-    loader.onerror = () => resolve(img.src);
-    loader.src = img.src;
-  });
-
-  img.src = dataUrl;
-  await waitForPdfImage(card);
-}
-
-async function downloadPdf(result) {
-  const btn = document.getElementById('pdfBtn');
-  const originalText = btn.textContent;
-  btn.textContent = 'Готовим PDF…';
-  btn.disabled = true;
-
-  const container = document.createElement('div');
-  container.className = 'pdf-container';
-  container.innerHTML = buildResultHtml(result, { forPrint: true });
-  document.body.appendChild(container);
-
-  const card = container.querySelector('#resultCard');
+  card.classList.add('pdf-sheet');
+  document.body.classList.add('pdf-export');
 
   try {
     if (typeof html2pdf === 'undefined') {
       throw new Error('Библиотека PDF не загружена');
     }
 
-    await waitForPdfImage(card);
-    await embedImageForPdf(card);
+    await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
 
     await html2pdf().set({
       margin: [10, 10, 10, 10],
@@ -681,7 +647,8 @@ async function downloadPdf(result) {
     console.error(err);
     btn.textContent = 'Не удалось скачать PDF';
   } finally {
-    container.remove();
+    card.classList.remove('pdf-sheet');
+    document.body.classList.remove('pdf-export');
     btn.disabled = false;
     setTimeout(() => {
       btn.textContent = originalText;

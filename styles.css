@@ -538,20 +538,12 @@ body {
 
 .result-recommendations-heading {
   font-family: var(--font-display);
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   font-weight: 600;
   color: var(--charcoal);
   text-align: center;
-  margin-bottom: 0.35rem;
-}
-
-.result-recommendations-note {
-  text-align: center;
-  font-size: 0.78rem;
-  color: var(--charcoal-soft);
-  letter-spacing: 0.02em;
   margin-bottom: 1rem;
-  line-height: 1.5;
+  line-height: 1.45;
 }
 
 .result-details {
@@ -689,6 +681,24 @@ body {
 }
 
 /* PDF и печать */
+body.pdf-export .bg-gradient,
+body.pdf-export .bg-pattern,
+body.pdf-export .header,
+body.pdf-export .footer,
+body.pdf-export .btn-group {
+  visibility: hidden !important;
+}
+
+body.pdf-export .main {
+  padding: 0;
+}
+
+body.pdf-export .card--result {
+  box-shadow: none;
+  max-width: 794px;
+  margin: 0 auto;
+}
+
 .pdf-container {
   position: fixed;
   left: -10000px;
@@ -741,10 +751,6 @@ body {
 
 .pdf-sheet .result-recommendations-heading {
   color: #2c2826;
-}
-
-.pdf-sheet .result-recommendations-note {
-  color: #5c5652;
 }
 
 .pdf-sheet .result-detail {
