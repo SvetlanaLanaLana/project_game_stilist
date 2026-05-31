@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Выбери идеальный образ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <div class="bg-gradient"></div>
+    <div class="bg-pattern"></div>
+
+    <header class="header no-print">
+      <span class="logo">StyleLab</span>
+      <span class="tagline">Ваш персональный стилист</span>
+    </header>
+
+    <main class="main" id="app">
+      <!-- Контент генерируется через JS -->
+    </main>
+
+    <footer class="footer no-print">
+      <p>Инструмент для проектов в сфере красоты и моды</p>
+      <p class="footer-note">Фото из ваших PDF · Обновить: node scripts/embed-images.mjs</p>
+    </footer>
+  </div>
+
+  <script src="style-assets.js"></script>
+  <script src="lib/html2pdf.bundle.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

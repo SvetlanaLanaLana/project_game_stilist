@@ -1,0 +1,136 @@
+{
+  "generatedAt": "2026-05-31T08:02:44.986Z",
+  "catalog": [
+    {
+      "id": "dramatic",
+      "label": "Драматический стиль",
+      "pdf": "Драматический стиль pdf.pdf",
+      "images": [
+        "images/extracted/dramatic-1.jpg",
+        "images/extracted/dramatic-2.jpg",
+        "images/extracted/dramatic-3.jpg",
+        "images/extracted/dramatic-4.jpg",
+        "images/extracted/dramatic-5.jpg",
+        "images/extracted/dramatic-6.jpg"
+      ],
+      "coverImage": "images/extracted/dramatic-1.jpg"
+    },
+    {
+      "id": "classic",
+      "label": "Классический стиль",
+      "pdf": "Классический стиль.pdf",
+      "images": [
+        "images/extracted/classic-1.jpg",
+        "images/extracted/classic-2.jpg",
+        "images/extracted/classic-3.jpg",
+        "images/extracted/classic-4.jpg",
+        "images/extracted/classic-5.jpg",
+        "images/extracted/classic-6.jpg"
+      ],
+      "coverImage": "images/extracted/classic-1.jpg"
+    },
+    {
+      "id": "romantic",
+      "label": "Романтический стиль",
+      "pdf": "Романтический стиль pdf.pdf",
+      "images": [
+        "images/extracted/romantic-1.jpg",
+        "images/extracted/romantic-2.jpg",
+        "images/extracted/romantic-3.jpg",
+        "images/extracted/romantic-4.jpg",
+        "images/extracted/romantic-5.jpg",
+        "images/extracted/romantic-6.jpg"
+      ],
+      "coverImage": "images/extracted/romantic-1.jpg"
+    },
+    {
+      "id": "sport",
+      "label": "Спортивный стиль",
+      "pdf": "Спортивный стиль  пдф.pdf",
+      "images": [
+        "images/extracted/sport-1.jpg",
+        "images/extracted/sport-2.jpg",
+        "images/extracted/sport-3.jpg",
+        "images/extracted/sport-4.jpg",
+        "images/extracted/sport-5.jpg",
+        "images/extracted/sport-6.jpg"
+      ],
+      "coverImage": "images/extracted/sport-1.jpg"
+    },
+    {
+      "id": "color",
+      "label": "Цвет — эмоциональный компонент",
+      "pdf": "Цвет эмоциональный компонент.pdf",
+      "images": [
+        "images/extracted/color-1.jpg",
+        "images/extracted/color-2.jpg",
+        "images/extracted/color-3.jpg",
+        "images/extracted/color-4.jpg",
+        "images/extracted/color-5.jpg",
+        "images/extracted/color-6.jpg"
+      ],
+      "coverImage": "images/extracted/color-1.jpg"
+    },
+    {
+      "id": "ethnic",
+      "label": "Этнический стиль",
+      "pdf": "Этнический стиль pdf 1.pdf",
+      "images": [
+        "images/extracted/ethnic-1.jpg",
+        "images/extracted/ethnic-2.jpg",
+        "images/extracted/ethnic-3.jpg",
+        "images/extracted/ethnic-4.jpg",
+        "images/extracted/ethnic-5.jpg",
+        "images/extracted/ethnic-6.jpg"
+      ],
+      "coverImage": "images/extracted/ethnic-1.jpg"
+    }
+  ],
+  "resultAssets": {
+    "classic-confident": {
+      "image": "images/extracted/classic-1.jpg",
+      "sourceLabel": "Классический стиль",
+      "sourcePdf": "Классический стиль.pdf"
+    },
+    "romantic-soft": {
+      "image": "images/extracted/romantic-1.jpg",
+      "sourceLabel": "Романтический стиль",
+      "sourcePdf": "Романтический стиль pdf.pdf"
+    },
+    "minimal-fresh": {
+      "image": "images/extracted/sport-2.jpg",
+      "sourceLabel": "Спортивный стиль",
+      "sourcePdf": "Спортивный стиль  пдф.pdf"
+    },
+    "bold-statement": {
+      "image": "images/extracted/dramatic-1.jpg",
+      "sourceLabel": "Драматический стиль",
+      "sourcePdf": "Драматический стиль pdf.pdf"
+    },
+    "romantic-date": {
+      "image": "images/extracted/romantic-2.jpg",
+      "sourceLabel": "Романтический стиль",
+      "sourcePdf": "Романтический стиль pdf.pdf"
+    },
+    "casual-comfort": {
+      "image": "images/extracted/sport-1.jpg",
+      "sourceLabel": "Спортивный стиль",
+      "sourcePdf": "Спортивный стиль  пдф.pdf"
+    },
+    "mysterious-cool": {
+      "image": "images/extracted/dramatic-2.jpg",
+      "sourceLabel": "Драматический стиль",
+      "sourcePdf": "Драматический стиль pdf.pdf"
+    },
+    "versatile-quality": {
+      "image": "images/extracted/ethnic-1.jpg",
+      "sourceLabel": "Этнический стиль",
+      "sourcePdf": "Этнический стиль pdf 1.pdf"
+    },
+    "default": {
+      "image": "images/extracted/color-1.jpg",
+      "sourceLabel": "Цвет — эмоциональный компонент",
+      "sourcePdf": "Цвет эмоциональный компонент.pdf"
+    }
+  }
+}

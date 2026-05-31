@@ -1,0 +1,504 @@
+const QUESTIONS = [
+  {
+    id: 'event',
+    label: 'Событие',
+    text: 'Куда вы собираетесь?',
+    options: [
+      { value: 'work', icon: '💼', title: 'Работа / деловая встреча', desc: 'Офис, переговоры, презентация' },
+      { value: 'date', icon: '🥂', title: 'Романтическое свидание', desc: 'Ужин, прогулка, особый вечер' },
+      { value: 'party', icon: '✨', title: 'Вечеринка / мероприятие', desc: 'Коктейль, галерея, выход в свет' },
+      { value: 'casual', icon: '☕', title: 'Повседневный день', desc: 'Кафе, шопинг, прогулка с друзьями' },
+    ],
+  },
+  {
+    id: 'style',
+    label: 'Стиль',
+    text: 'Какой стиль вам ближе?',
+    options: [
+      { value: 'classic', icon: '🎩', title: 'Классика', desc: 'Элегантность, лаконичность, вне времени' },
+      { value: 'romantic', icon: '🌸', title: 'Романтика', desc: 'Нежность, женственность, мягкие линии' },
+      { value: 'minimal', icon: '◻️', title: 'Минимализм', desc: 'Чистые формы, нейтральная палитра' },
+      { value: 'bold', icon: '🔥', title: 'Смелый / трендовый', desc: 'Акценты, необычные сочетания' },
+    ],
+  },
+  {
+    id: 'colors',
+    label: 'Цвета',
+    text: 'Какая палитра вам откликается?',
+    options: [
+      { value: 'neutral', icon: '🤍', title: 'Нейтральная', desc: 'Бежевый, белый, серый, чёрный' },
+      { value: 'warm', icon: '🍂', title: 'Тёплая', desc: 'Карамель, терракота, золото' },
+      { value: 'cool', icon: '💎', title: 'Холодная', desc: 'Пудра, лаванда, серебро' },
+      { value: 'bright', icon: '🌈', title: 'Яркая', desc: 'Насыщенные, контрастные оттенки' },
+    ],
+  },
+  {
+    id: 'mood',
+    label: 'Настроение',
+    text: 'Какое впечатление хотите произвести?',
+    options: [
+      { value: 'confident', icon: '👑', title: 'Уверенность', desc: 'Сильный, собранный образ' },
+      { value: 'soft', icon: '🕊️', title: 'Мягкость', desc: 'Лёгкость, открытость, тепло' },
+      { value: 'mysterious', icon: '🌙', title: 'Интрига', desc: 'Загадочность, глубина' },
+      { value: 'fresh', icon: '☀️', title: 'Свежесть', desc: 'Бодрость, естественность' },
+    ],
+  },
+  {
+    id: 'priority',
+    label: 'Приоритет',
+    text: 'Что для вас важнее всего?',
+    options: [
+      { value: 'comfort', icon: '🛋️', title: 'Комфорт', desc: 'Удобство на весь день' },
+      { value: 'statement', icon: '💫', title: 'Эффектность', desc: 'Запоминающийся образ' },
+      { value: 'versatile', icon: '🔄', title: 'Универсальность', desc: 'Легко адаптировать под разные ситуации' },
+      { value: 'quality', icon: '✨', title: 'Качество', desc: 'Премиальные материалы и фактуры' },
+    ],
+  },
+];
+
+const RESULTS = {
+  'classic-confident': {
+    title: 'Сила классики',
+    image: 'images/classic.svg',
+    imageAlt: 'Деловой классический образ',
+    description: 'Строгий, но безупречный образ для тех, кто ценит элегантность и авторитет. Идеален для деловой среды и важных встреч.',
+    outfit: 'Пиджак прямого кроя, шёлковая блуза или рубашка, брюки со стрелками, лаконичные туфли на каблуке.',
+    beauty: 'Матовая кожа, nude-помада, стрелки, собранные волосы или гладкий пучок.',
+    accessories: 'Тонкие золотые украшения, структурированная сумка, классические часы.',
+    tags: ['#классика', '#деловой', '#элегантность', '#вне_времени'],
+  },
+  'romantic-soft': {
+    title: 'Нежная романтика',
+    image: 'images/romantic.svg',
+    imageAlt: 'Романтичный нежный образ',
+    description: 'Нежный, воздушный образ с романтичным настроением. Создаёт ощущение лёгкости и женственности.',
+    outfit: 'Платье или юбка миди из лёгкой ткани, мягкий кардиган, балетки или сандалии на низком каблуке.',
+    beauty: 'Румянец на яблочках щёк, розовая помада, лёгкие локоны, перламутровый хайлайтер.',
+    accessories: 'Жемчужные серьги, тонкий пояс, миниатюрная сумочка.',
+    tags: ['#романтика', '#нежность', '#пастель', '#женственность'],
+  },
+  'minimal-fresh': {
+    title: 'Чистый минимализм',
+    image: 'images/minimal.svg',
+    imageAlt: 'Минималистичный свежий образ',
+    description: 'Чистые линии и спокойная палитра — образ для тех, кто ценит простоту и современную эстетику.',
+    outfit: 'Свободная рубашка или свитер оверсайз, прямые брюки, белые кроссовки или минималистичные лоферы.',
+    beauty: 'Естественный макияж, увлажнённая кожа, блеск для губ, гладкие или собранные волосы.',
+    accessories: 'Одно акцентное кольцо, текстильная сумка, солнцезащитные очки.',
+    tags: ['#минимализм', '#чистота', '#повседневный', '#современность'],
+  },
+  'bold-statement': {
+    title: 'Смелый акцент',
+    image: 'images/bold.svg',
+    imageAlt: 'Яркий эффектный образ',
+    description: 'Яркий, запоминающийся образ для тех, кто не боится быть в центре внимания.',
+    outfit: 'Платье или комплект с необычным кроем, контрастные цвета, каблуки или массивные ботинки.',
+    beauty: 'Смелый макияж глаз или губ, сияющая кожа, объёмные волосы или гладкая укладка.',
+    accessories: 'Крупные серьги, клатч необычной формы, несколько колец.',
+    tags: ['#акцент', '#тренды', '#яркий', '#вечеринка'],
+  },
+  'romantic-date': {
+    title: 'Сияние вечера',
+    image: 'images/date.svg',
+    imageAlt: 'Вечерний образ для свидания',
+    description: 'Изысканный вечерний образ с ноткой романтики — идеален для особого свидания.',
+    outfit: 'Платье с открытыми плечами или slip-платье, каблуки, лёгкий пиджак или накидка.',
+    beauty: 'Сияющая кожа, дымчатые глаза, красная или ягодная помада, объёмная укладка.',
+    accessories: 'Бриллиантовые или кристальные серьги, клатч, тонкий браслет.',
+    tags: ['#свидание', '#вечер', '#гламур', '#романтика'],
+  },
+  'casual-comfort': {
+    title: 'Лёгкий шик',
+    image: 'images/casual.svg',
+    imageAlt: 'Повседневный стильный образ',
+    description: 'Стильный повседневный образ без усилий — комфорт и эстетика в одном.',
+    outfit: 'Джинсы или брюки свободного кроя, базовый топ, пиджак оверсайз или тренч, кроссовки или лоферы.',
+    beauty: 'BB-крем, тонированный бальзам для губ, аккуратные брови, небрежный пучок или хвост.',
+    accessories: 'Солнцезащитные очки, шоппер, минимальные украшения.',
+    tags: ['#повседневный', '#комфорт', '#на_каждый_день', '#шик'],
+  },
+  'mysterious-cool': {
+    title: 'Тёмная элегантность',
+    image: 'images/dark.svg',
+    imageAlt: 'Загадочный тёмный образ',
+    description: 'Загадочный, утончённый образ в холодной палитре — для тех, кто любит интригу.',
+    outfit: 'Total black или монохром: платье-свитер, кожаная куртка, сапоги или ботильоны.',
+    beauty: 'Матовая кожа, тёмные губы, графичная стрелка, прямые волосы или низкий пучок.',
+    accessories: 'Серебряные украшения, структурированная сумка, тонкий ремень.',
+    tags: ['#тёмный', '#загадка', '#монохром', '#дерзость'],
+  },
+  'versatile-quality': {
+    title: 'Капсульная роскошь',
+    image: 'images/luxe.svg',
+    imageAlt: 'Премиальный универсальный образ',
+    description: 'Универсальный премиальный образ — инвестиция в качество, которая работает в любой ситуации.',
+    outfit: 'Кашемировый свитер, брюки по фигуре, качественное пальто, классические туфли.',
+    beauty: 'Ухоженная кожа, нейтральный макияж, здоровое сияние, аккуратная укладка.',
+    accessories: 'Кожаная сумка, шёлковый платок, тонкие золотые украшения.',
+    tags: ['#люкс', '#капсула', '#качество', '#универсальность'],
+  },
+};
+
+const DEFAULT_RESULT = {
+  title: 'Ваш фирменный образ',
+  image: 'images/default.svg',
+  imageAlt: 'Уникальный персональный образ',
+  description: 'Уникальный образ, сочетающий ваши предпочтения. Экспериментируйте с текстурами и акцентами!',
+  outfit: 'Сочетайте базовые вещи с одним акцентным элементом — это всегда работает.',
+  beauty: 'Подчеркните естественную красоту: увлажнение, лёгкий макияж, ухоженные волосы.',
+  accessories: 'Выберите 1–2 акцентных аксессуара, не перегружая образ.',
+  tags: ['#ваш_стиль', '#образ', '#уникальность', '#стиль'],
+};
+
+const state = {
+  screen: 'welcome',
+  step: 0,
+  answers: {},
+  selected: null,
+  autoAdvanceTimer: null,
+  currentResult: null,
+};
+
+const app = document.getElementById('app');
+
+function getResultKey(answers) {
+  const { event, style, colors, mood, priority } = answers;
+
+  if (event === 'date' && (style === 'romantic' || mood === 'soft' || mood === 'mysterious')) {
+    return 'romantic-date';
+  }
+  if (style === 'classic' && (mood === 'confident' || event === 'work')) {
+    return 'classic-confident';
+  }
+  if (style === 'romantic' && mood === 'soft') {
+    return 'romantic-soft';
+  }
+  if (style === 'minimal' && (mood === 'fresh' || colors === 'neutral')) {
+    return 'minimal-fresh';
+  }
+  if (style === 'bold' || priority === 'statement' || colors === 'bright') {
+    return 'bold-statement';
+  }
+  if (event === 'casual' && priority === 'comfort') {
+    return 'casual-comfort';
+  }
+  if (mood === 'mysterious' || colors === 'cool') {
+    return 'mysterious-cool';
+  }
+  if (priority === 'quality' || priority === 'versatile') {
+    return 'versatile-quality';
+  }
+
+  const fallbackMap = {
+    work: 'classic-confident',
+    date: 'romantic-date',
+    party: 'bold-statement',
+    casual: 'casual-comfort',
+  };
+
+  return fallbackMap[event] || 'versatile-quality';
+}
+
+function renderWelcome() {
+  app.innerHTML = `
+    <div class="card">
+      <div class="welcome-icon">✦</div>
+      <h1>Выбери идеальный образ</h1>
+      <p class="subtitle">Ответьте на 5 коротких вопросов — и мы подберём образ, который отражает ваш стиль, настроение и повод</p>
+      <button type="button" class="btn btn-primary" id="startBtn">Начать подбор</button>
+    </div>
+  `;
+  document.getElementById('startBtn').addEventListener('click', startQuiz);
+}
+
+function startQuiz() {
+  clearAutoAdvance();
+  state.screen = 'quiz';
+  state.step = 0;
+  state.answers = {};
+  state.selected = null;
+  state.currentResult = null;
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[state.step];
+  const progress = ((state.step + 1) / QUESTIONS.length) * 100;
+
+  app.innerHTML = `
+    <div class="card">
+      <div class="progress-wrap">
+        <div class="progress-meta">
+          <span>Вопрос ${state.step + 1} из ${QUESTIONS.length}</span>
+          <span>${Math.round(progress)}%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: ${progress}%"></div>
+        </div>
+      </div>
+
+      <p class="question-label">${q.label}</p>
+      <h2 class="question-text">${q.text}</h2>
+
+      <div class="options" role="radiogroup" aria-label="${q.text}">
+        ${q.options.map(opt => `
+          <button
+            type="button"
+            class="option ${state.selected === opt.value ? 'selected' : ''}"
+            data-value="${opt.value}"
+            role="radio"
+            aria-checked="${state.selected === opt.value}"
+          >
+            <span class="option-icon">${opt.icon}</span>
+            <span class="option-text">
+              <strong>${opt.title}</strong>
+              <span>${opt.desc}</span>
+            </span>
+          </button>
+        `).join('')}
+      </div>
+
+      <p class="selection-hint ${state.selected ? 'selection-hint--hidden' : ''}" id="selectionHint">
+        Выберите один из вариантов, чтобы продолжить
+      </p>
+
+      <button type="button" class="btn btn-primary" id="nextBtn" ${!state.selected ? 'disabled' : ''}>
+        ${state.step < QUESTIONS.length - 1 ? 'Далее' : 'Узнать результат'}
+      </button>
+
+      ${state.step > 0 ? '<button type="button" class="btn-back" id="backBtn">← Назад</button>' : ''}
+    </div>
+  `;
+
+  document.querySelectorAll('.option').forEach(btn => {
+    btn.addEventListener('click', () => selectOption(btn.dataset.value));
+  });
+
+  document.getElementById('nextBtn').addEventListener('click', nextStep);
+  const backBtn = document.getElementById('backBtn');
+  if (backBtn) backBtn.addEventListener('click', prevStep);
+}
+
+function clearAutoAdvance() {
+  if (state.autoAdvanceTimer) {
+    clearTimeout(state.autoAdvanceTimer);
+    state.autoAdvanceTimer = null;
+  }
+}
+
+function selectOption(value) {
+  state.selected = value;
+
+  document.querySelectorAll('.option').forEach(btn => {
+    btn.classList.toggle('selected', btn.dataset.value === value);
+    btn.setAttribute('aria-checked', btn.dataset.value === value);
+  });
+
+  const nextBtn = document.getElementById('nextBtn');
+  const hint = document.getElementById('selectionHint');
+
+  if (nextBtn) nextBtn.disabled = false;
+  if (hint) hint.classList.add('selection-hint--hidden');
+
+  clearAutoAdvance();
+  state.autoAdvanceTimer = setTimeout(() => {
+    if (state.selected === value) {
+      nextStep();
+    }
+  }, 450);
+}
+
+function nextStep() {
+  clearAutoAdvance();
+
+  if (!state.selected) {
+    const hint = document.getElementById('selectionHint');
+    if (hint) {
+      hint.classList.remove('selection-hint--hidden');
+      hint.classList.add('selection-hint--shake');
+      setTimeout(() => hint.classList.remove('selection-hint--shake'), 500);
+    }
+    return;
+  }
+
+  const q = QUESTIONS[state.step];
+  state.answers[q.id] = state.selected;
+
+  if (state.step < QUESTIONS.length - 1) {
+    state.step++;
+    state.selected = state.answers[QUESTIONS[state.step].id] || null;
+    renderQuestion();
+  } else {
+    renderResult();
+  }
+}
+
+function prevStep() {
+  clearAutoAdvance();
+
+  if (state.step > 0) {
+    state.step--;
+    state.selected = state.answers[QUESTIONS[state.step].id] || null;
+    renderQuestion();
+  }
+}
+
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function enrichResult(result, resultKey) {
+  const assets = (typeof STYLE_ASSETS !== 'undefined' && STYLE_ASSETS[resultKey])
+    || (typeof STYLE_ASSETS !== 'undefined' && STYLE_ASSETS.default)
+    || null;
+
+  if (!assets?.image) return { ...result, fallbackImage: result.image };
+
+  return {
+    ...result,
+    image: assets.image,
+    fallbackImage: result.image,
+    imageAlt: `${result.title} — ${assets.sourceLabel || 'стиль'}`,
+    sourceLabel: assets.sourceLabel || '',
+    sourcePdf: assets.sourcePdf || '',
+  };
+}
+
+function buildResultHtml(result, { forPrint = false } = {}) {
+  const printClass = forPrint ? ' pdf-sheet' : '';
+  const actionsClass = forPrint ? ' no-print' : '';
+
+  return `
+    <div class="card card--result${printClass}" id="resultCard">
+      <div style="text-align: center">
+        <span class="result-badge">Ваш идеальный образ</span>
+      </div>
+
+      <div class="result-visual">
+        <img
+          class="result-image"
+          src="${result.image}"
+          alt="${result.imageAlt}"
+          width="900"
+          height="560"
+          loading="eager"
+          onerror="if(this.dataset.fallback && this.src!==this.dataset.fallback){this.src=this.dataset.fallback;}"
+          data-fallback="${result.fallbackImage || ''}"
+        >
+        <div class="result-visual-overlay">
+          <div class="result-visual-label">${result.title}</div>
+        </div>
+      </div>
+
+      <h2 class="result-title">${result.title}</h2>
+      ${result.sourceLabel ? `<p class="result-source">По материалам: «${result.sourceLabel}»</p>` : ''}
+      <p class="result-desc">${result.description}</p>
+
+      <div class="result-details">
+        <div class="result-detail">
+          <h3>Одежда</h3>
+          <p>${result.outfit}</p>
+        </div>
+        <div class="result-detail">
+          <h3>Красота</h3>
+          <p>${result.beauty}</p>
+        </div>
+        <div class="result-detail">
+          <h3>Аксессуары</h3>
+          <p>${result.accessories}</p>
+        </div>
+      </div>
+
+      <div class="result-tags">
+        ${result.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+      </div>
+
+      ${forPrint ? `
+        <p class="pdf-footer">
+          StyleLab · Ваш персональный стилист · ${new Date().toLocaleDateString('ru-RU')}
+        </p>
+      ` : `
+        <div class="btn-group${actionsClass}">
+          <button type="button" class="btn btn-primary" id="pdfBtn">Сохранить PDF</button>
+          <button type="button" class="btn btn-secondary" id="restartBtn">Пройти заново</button>
+          <button type="button" class="btn btn-ghost" id="shareBtn">Поделиться результатом</button>
+        </div>
+      `}
+    </div>
+  `;
+}
+
+function renderResult() {
+  state.screen = 'result';
+  clearAutoAdvance();
+
+  const key = getResultKey(state.answers);
+  const baseResult = RESULTS[key] || DEFAULT_RESULT;
+  const result = enrichResult(baseResult, key);
+  state.currentResult = result;
+
+  app.innerHTML = buildResultHtml(result);
+  scrollToTop();
+
+  document.getElementById('pdfBtn').addEventListener('click', () => downloadPdf(result));
+  document.getElementById('restartBtn').addEventListener('click', () => {
+    state.step = 0;
+    state.answers = {};
+    state.selected = null;
+    state.currentResult = null;
+    renderWelcome();
+  });
+  document.getElementById('shareBtn').addEventListener('click', () => shareResult(result));
+}
+
+async function downloadPdf(result) {
+  const btn = document.getElementById('pdfBtn');
+  const originalText = btn.textContent;
+  btn.textContent = 'Готовим PDF…';
+  btn.disabled = true;
+
+  const container = document.createElement('div');
+  container.className = 'pdf-container';
+  container.innerHTML = buildResultHtml(result, { forPrint: true });
+  document.body.appendChild(container);
+
+  const card = container.querySelector('#resultCard');
+
+  try {
+    if (typeof html2pdf !== 'undefined') {
+      await html2pdf().set({
+        margin: [12, 12, 12, 12],
+        filename: `образ-${result.title.replace(/\s+/g, '-').toLowerCase()}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, logging: false },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] },
+      }).from(card).save();
+    } else {
+      window.print();
+    }
+  } catch {
+    window.print();
+  } finally {
+    container.remove();
+    btn.textContent = originalText;
+    btn.disabled = false;
+  }
+}
+
+function shareResult(result) {
+  const text = `Мой идеальный образ — «${result.title}»! ${result.description}`;
+
+  if (navigator.share) {
+    navigator.share({ title: 'Выбери идеальный образ', text }).catch(() => {});
+  } else {
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById('shareBtn');
+      const original = btn.textContent;
+      btn.textContent = 'Скопировано!';
+      setTimeout(() => { btn.textContent = original; }, 2000);
+    }).catch(() => {});
+  }
+}
+
+renderWelcome();
