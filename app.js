@@ -397,7 +397,14 @@ function enrichResult(result, answers = {}) {
     return { ...result, fallbackImage: result.image };
   }
 
-  const profile = FOLDER_PROFILES[photo.folder] || {};
+  const profile = FOLDER_PROFILES[photo.folder] || {
+    title: folderLabel,
+    description: `Образ в стиле «${folderLabel}» — подобран по вашим ответам в квизе.`,
+    outfit: 'Сочетайте базовые вещи с одним акцентным элементом — это всегда работает.',
+    beauty: 'Подчеркните естественную красоту: увлажнение, лёгкий макияж, ухоженные волосы.',
+    accessories: 'Выберите 1–2 акцентных аксессуара, не перегружая образ.',
+    tags: ['#стиль', '#образ', `#${photo.folder}`],
+  };
   const folderLabel = STYLE_FOLDER_LABELS?.[photo.folder] || photo.folder;
   const colorLabel = COLOR_LABELS?.[answers.colors] || '';
 
@@ -479,7 +486,9 @@ function pickStylePhoto(answers) {
     const items = STYLE_GALLERY[folder];
     if (!items?.length) continue;
     for (const item of items) {
-      pool.push({ ...item, folder });
+      const file = typeof item === 'string' ? item : item.file;
+      if (!file) continue;
+      pool.push({ file, folder });
     }
   }
 
@@ -497,7 +506,7 @@ function pickStylePhoto(answers) {
   const picked = pool[idx];
 
   return {
-    image: picked.data,
+    image: `images/${picked.folder}/${picked.file}`,
     folder: picked.folder,
   };
 }

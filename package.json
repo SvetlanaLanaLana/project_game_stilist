@@ -1,0 +1,8 @@
+{
+  "name": "stylelab-quiz",
+  "private": true,
+  "scripts": {
+    "build:gallery": "node scripts/build-gallery.mjs",
+    "watch:gallery": "node scripts/build-gallery.mjs --watch"
+  }
+}
