@@ -563,7 +563,6 @@ function buildResultHtml(result, { forPrint = false } = {}) {
             <div class="btn-group${actionsClass}">
               <button type="button" class="btn btn-primary" id="pdfBtn">Сохранить PDF</button>
               <button type="button" class="btn btn-secondary" id="restartBtn">Пройти заново</button>
-              <button type="button" class="btn btn-ghost" id="shareBtn">Поделиться результатом</button>
             </div>
           `}
         </div>
@@ -592,7 +591,6 @@ function renderResult() {
     state.currentResult = null;
     renderWelcome();
   });
-  document.getElementById('shareBtn').addEventListener('click', () => shareResult(result));
 }
 
 async function downloadPdf(result) {
@@ -627,21 +625,6 @@ async function downloadPdf(result) {
     container.remove();
     btn.textContent = originalText;
     btn.disabled = false;
-  }
-}
-
-function shareResult(result) {
-  const text = `Мой идеальный образ — «${result.title}»! ${result.description}`;
-
-  if (navigator.share) {
-    navigator.share({ title: 'Выбери идеальный образ', text }).catch(() => {});
-  } else {
-    navigator.clipboard.writeText(text).then(() => {
-      const btn = document.getElementById('shareBtn');
-      const original = btn.textContent;
-      btn.textContent = 'Скопировано!';
-      setTimeout(() => { btn.textContent = original; }, 2000);
-    }).catch(() => {});
   }
 }
 
