@@ -143,7 +143,9 @@ const app = document.getElementById('app');
 function renderWelcome() {
   app.innerHTML = `
     <div class="card card--quiz">
-      <div class="welcome-icon">✦</div>
+      <div class="welcome-brand">
+        <img src="images/logo.svg" alt="StyleLab" class="welcome-logo" width="140" height="140">
+      </div>
       <h1>Выбери идеальный образ</h1>
       <p class="subtitle">Четыре коротких вопроса — и мы подберём look из коллекции с учётом стиля, палитры, повода и настроения</p>
       <button type="button" class="btn btn-primary" id="startBtn">Начать подбор</button>
