@@ -1,31 +1,21 @@
 const QUESTIONS = [
   {
-    id: 'event',
-    label: 'Событие',
-    text: 'Куда вы собираетесь?',
-    options: [
-      { value: 'work', icon: '💼', title: 'Работа / деловая встреча', desc: 'Офис, переговоры, презентация' },
-      { value: 'date', icon: '🥂', title: 'Романтическое свидание', desc: 'Ужин, прогулка, особый вечер' },
-      { value: 'party', icon: '✨', title: 'Вечеринка / мероприятие', desc: 'Коктейль, галерея, выход в свет' },
-      { value: 'casual', icon: '☕', title: 'Повседневный день', desc: 'Кафе, шопинг, прогулка с друзьями' },
-    ],
-  },
-  {
     id: 'style',
     label: 'Стиль',
-    text: 'Какой стиль вам ближе?',
+    text: 'Какое направление вам ближе?',
+    gridClass: 'options--grid-5',
     options: [
-      { value: 'klassika', icon: '🎩', title: 'Классика', desc: 'Элегантность, лаконичность, вне времени' },
-      { value: 'romantika', icon: '🌸', title: 'Романтика', desc: 'Нежность, женственность, мягкие линии' },
-      { value: 'dramatik', icon: '✨', title: 'Драматика', desc: 'Выразительность, контраст, характер' },
-      { value: 'спорт', icon: '👟', title: 'Спорт', desc: 'Комфорт, динамика, активный день' },
-      { value: 'этника', icon: '🪶', title: 'Этника', desc: 'Свобода, натуральность, boho' },
+      { value: 'klassika', icon: '🎩', title: 'Классика', desc: 'Костюмы, жакеты, деловая элегантность' },
+      { value: 'romantika', icon: '🌸', title: 'Романтика', desc: 'Платья, нежность, женственность' },
+      { value: 'dramatik', icon: '✨', title: 'Драматика', desc: 'Контраст, выразительность, акценты' },
+      { value: 'спорт', icon: '👟', title: 'Спорт', desc: 'Комфорт, динамика, casual' },
+      { value: 'этника', icon: '🪶', title: 'Этника', desc: 'Boho, этнические мотивы, свобода' },
     ],
   },
   {
     id: 'colors',
     label: 'Палитра',
-    text: 'Какая палитра вам откликается?',
+    text: 'Какая цветовая гамма вам ближе?',
     options: [
       { value: 'neutral', icon: '🤍', title: 'Нейтральная', desc: 'Бежевый, белый, серый, чёрный' },
       { value: 'bright', icon: '🌈', title: 'Яркая', desc: 'Насыщенные, контрастные оттенки' },
@@ -33,122 +23,17 @@ const QUESTIONS = [
       { value: 'cool', icon: '💎', title: 'Холодная' },
     ],
   },
-  {
-    id: 'mood',
-    label: 'Настроение',
-    text: 'Какое впечатление хотите произвести?',
-    options: [
-      { value: 'confident', icon: '👑', title: 'Уверенность', desc: 'Сильный, собранный образ' },
-      { value: 'soft', icon: '🕊️', title: 'Мягкость', desc: 'Лёгкость, открытость, тепло' },
-      { value: 'mysterious', icon: '🌙', title: 'Интрига', desc: 'Загадочность, глубина' },
-      { value: 'fresh', icon: '☀️', title: 'Свежесть', desc: 'Бодрость, естественность' },
-    ],
-  },
-  {
-    id: 'priority',
-    label: 'Приоритет',
-    text: 'Что для вас важнее всего?',
-    options: [
-      { value: 'comfort', icon: '🛋️', title: 'Комфорт', desc: 'Удобство на весь день' },
-      { value: 'statement', icon: '💫', title: 'Эффектность', desc: 'Запоминающийся образ' },
-      { value: 'versatile', icon: '🔄', title: 'Универсальность', desc: 'Легко адаптировать под разные ситуации' },
-      { value: 'quality', icon: '✨', title: 'Качество', desc: 'Премиальные материалы и фактуры' },
-    ],
-  },
 ];
 
-const RESULTS = {
-  'classic-confident': {
-    title: 'Сила классики',
-    image: 'images/classic.svg',
-    imageAlt: 'Деловой классический образ',
-    description: 'Строгий, но безупречный образ для тех, кто ценит элегантность и авторитет. Идеален для деловой среды и важных встреч.',
-    outfit: 'Пиджак прямого кроя, шёлковая блуза или рубашка, брюки со стрелками, лаконичные туфли на каблуке.',
-    beauty: 'Матовая кожа, nude-помада, стрелки, собранные волосы или гладкий пучок.',
-    accessories: 'Тонкие золотые украшения, структурированная сумка, классические часы.',
-    tags: ['#классика', '#деловой', '#элегантность', '#вне_времени'],
-  },
-  'romantic-soft': {
-    title: 'Нежная романтика',
-    image: 'images/romantic.svg',
-    imageAlt: 'Романтичный нежный образ',
-    description: 'Нежный, воздушный образ с романтичным настроением. Создаёт ощущение лёгкости и женственности.',
-    outfit: 'Платье или юбка миди из лёгкой ткани, мягкий кардиган, балетки или сандалии на низком каблуке.',
-    beauty: 'Румянец на яблочках щёк, розовая помада, лёгкие локоны, перламутровый хайлайтер.',
-    accessories: 'Жемчужные серьги, тонкий пояс, миниатюрная сумочка.',
-    tags: ['#романтика', '#нежность', '#пастель', '#женственность'],
-  },
-  'minimal-fresh': {
-    title: 'Чистый минимализм',
-    image: 'images/minimal.svg',
-    imageAlt: 'Минималистичный свежий образ',
-    description: 'Чистые линии и спокойная палитра — образ для тех, кто ценит простоту и современную эстетику.',
-    outfit: 'Свободная рубашка или свитер оверсайз, прямые брюки, белые кроссовки или минималистичные лоферы.',
-    beauty: 'Естественный макияж, увлажнённая кожа, блеск для губ, гладкие или собранные волосы.',
-    accessories: 'Одно акцентное кольцо, текстильная сумка, солнцезащитные очки.',
-    tags: ['#минимализм', '#чистота', '#повседневный', '#современность'],
-  },
-  'bold-statement': {
-    title: 'Смелый акцент',
-    image: 'images/bold.svg',
-    imageAlt: 'Яркий эффектный образ',
-    description: 'Яркий, запоминающийся образ для тех, кто не боится быть в центре внимания.',
-    outfit: 'Платье или комплект с необычным кроем, контрастные цвета, каблуки или массивные ботинки.',
-    beauty: 'Смелый макияж глаз или губ, сияющая кожа, объёмные волосы или гладкая укладка.',
-    accessories: 'Крупные серьги, клатч необычной формы, несколько колец.',
-    tags: ['#акцент', '#тренды', '#яркий', '#вечеринка'],
-  },
-  'romantic-date': {
-    title: 'Сияние вечера',
-    image: 'images/date.svg',
-    imageAlt: 'Вечерний образ для свидания',
-    description: 'Изысканный вечерний образ с ноткой романтики — идеален для особого свидания.',
-    outfit: 'Платье с открытыми плечами или slip-платье, каблуки, лёгкий пиджак или накидка.',
-    beauty: 'Сияющая кожа, дымчатые глаза, красная или ягодная помада, объёмная укладка.',
-    accessories: 'Бриллиантовые или кристальные серьги, клатч, тонкий браслет.',
-    tags: ['#свидание', '#вечер', '#гламур', '#романтика'],
-  },
-  'casual-comfort': {
-    title: 'Лёгкий шик',
-    image: 'images/casual.svg',
-    imageAlt: 'Повседневный стильный образ',
-    description: 'Стильный повседневный образ без усилий — комфорт и эстетика в одном.',
-    outfit: 'Джинсы или брюки свободного кроя, базовый топ, пиджак оверсайз или тренч, кроссовки или лоферы.',
-    beauty: 'BB-крем, тонированный бальзам для губ, аккуратные брови, небрежный пучок или хвост.',
-    accessories: 'Солнцезащитные очки, шоппер, минимальные украшения.',
-    tags: ['#повседневный', '#комфорт', '#на_каждый_день', '#шик'],
-  },
-  'mysterious-cool': {
-    title: 'Тёмная элегантность',
-    image: 'images/dark.svg',
-    imageAlt: 'Загадочный тёмный образ',
-    description: 'Загадочный, утончённый образ в холодной палитре — для тех, кто любит интригу.',
-    outfit: 'Total black или монохром: платье-свитер, кожаная куртка, сапоги или ботильоны.',
-    beauty: 'Матовая кожа, тёмные губы, графичная стрелка, прямые волосы или низкий пучок.',
-    accessories: 'Серебряные украшения, структурированная сумка, тонкий ремень.',
-    tags: ['#тёмный', '#загадка', '#монохром', '#дерзость'],
-  },
-  'versatile-quality': {
-    title: 'Капсульная роскошь',
-    image: 'images/luxe.svg',
-    imageAlt: 'Премиальный универсальный образ',
-    description: 'Универсальный премиальный образ — инвестиция в качество, которая работает в любой ситуации.',
-    outfit: 'Кашемировый свитер, брюки по фигуре, качественное пальто, классические туфли.',
-    beauty: 'Ухоженная кожа, нейтральный макияж, здоровое сияние, аккуратная укладка.',
-    accessories: 'Кожаная сумка, шёлковый платок, тонкие золотые украшения.',
-    tags: ['#люкс', '#капсула', '#качество', '#универсальность'],
-  },
-};
-
 const DEFAULT_RESULT = {
-  title: 'Ваш фирменный образ',
+  title: 'Ваш образ',
   image: 'images/default.svg',
-  imageAlt: 'Уникальный персональный образ',
-  description: 'Уникальный образ, сочетающий ваши предпочтения. Экспериментируйте с текстурами и акцентами!',
-  outfit: 'Сочетайте базовые вещи с одним акцентным элементом — это всегда работает.',
-  beauty: 'Подчеркните естественную красоту: увлажнение, лёгкий макияж, ухоженные волосы.',
-  accessories: 'Выберите 1–2 акцентных аксессуара, не перегружая образ.',
-  tags: ['#ваш_стиль', '#образ', '#уникальность', '#стиль'],
+  imageAlt: 'Персональный образ',
+  description: 'Образ из нашей коллекции — подобран по вашему стилю и палитре.',
+  outfit: 'Сочетайте базовые вещи с одним акцентным элементом.',
+  beauty: 'Подчеркните естественную красоту: увлажнение, лёгкий макияж.',
+  accessories: 'Выберите 1–2 акцентных аксессуара.',
+  tags: ['#образ', '#стиль'],
 };
 
 const FOLDER_PROFILES = {
@@ -205,24 +90,12 @@ const state = {
 
 const app = document.getElementById('app');
 
-function getResultKey(answers) {
-  const styleMap = {
-    klassika: 'classic-confident',
-    romantika: 'romantic-soft',
-    dramatik: 'bold-statement',
-    'спорт': 'casual-comfort',
-    'этника': 'versatile-quality',
-  };
-
-  return styleMap[answers.style] || 'versatile-quality';
-}
-
 function renderWelcome() {
   app.innerHTML = `
     <div class="card card--quiz">
       <div class="welcome-icon">✦</div>
       <h1>Выбери идеальный образ</h1>
-      <p class="subtitle">Ответьте на 5 коротких вопросов — и мы подберём образ, который отражает ваш стиль, настроение и повод</p>
+      <p class="subtitle">Два шага — и мы покажем look из коллекции: классика, романтика, драматика, спорт или этника</p>
       <button type="button" class="btn btn-primary" id="startBtn">Начать подбор</button>
     </div>
   `;
@@ -258,7 +131,7 @@ function renderQuestion() {
       <p class="question-label">${q.label}</p>
       <h2 class="question-text">${q.text}</h2>
 
-      <div class="options options--grid" role="radiogroup" aria-label="${q.text}">
+      <div class="options options--grid ${q.gridClass || ''}" role="radiogroup" aria-label="${q.text}">
         ${q.options.map(opt => `
           <button
             type="button"
@@ -408,18 +281,10 @@ function pickStylePhoto(answers) {
   const items = STYLE_GALLERY[folder];
   if (!items?.length) return null;
 
-  const COLOR_INDEX = { neutral: 0, bright: 1, warm: 2, cool: 3 };
-  const MOOD_OFFSET = { confident: 0, soft: 1, mysterious: 2, fresh: 3 };
-  const PRIORITY_OFFSET = { comfort: 0, statement: 1, versatile: 2, quality: 3 };
-
-  const colors = answers.colors || 'neutral';
-  const mood = answers.mood || 'confident';
-  const priority = answers.priority || 'comfort';
-  const idx = (
-    (COLOR_INDEX[colors] || 0)
-    + (MOOD_OFFSET[mood] || 0)
-    + (PRIORITY_OFFSET[priority] || 0)
-  ) % items.length;
+  const PALETTE_INDEX = { neutral: 0, bright: 1, warm: 2, cool: 3 };
+  const paletteIdx = PALETTE_INDEX[answers.colors] ?? 0;
+  const step = Math.max(1, Math.floor(items.length / 4));
+  const idx = Math.min(paletteIdx * step, items.length - 1);
 
   const file = typeof items[idx] === 'string' ? items[idx] : items[idx].file;
   if (!file) return null;
@@ -498,9 +363,7 @@ function renderResult() {
   state.screen = 'result';
   clearAutoAdvance();
 
-  const key = getResultKey(state.answers);
-  const baseResult = RESULTS[key] || DEFAULT_RESULT;
-  const result = enrichResult(baseResult, state.answers);
+  const result = enrichResult(DEFAULT_RESULT, state.answers);
   state.currentResult = result;
 
   app.innerHTML = buildResultHtml(result);
