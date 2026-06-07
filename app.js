@@ -23,7 +23,57 @@ const QUESTIONS = [
       { value: 'cool', icon: '💎', title: 'Холодная' },
     ],
   },
+  {
+    id: 'event',
+    label: 'Повод',
+    text: 'Куда вы собираетесь в этом образе?',
+    options: [
+      { value: 'work', icon: '💼', title: 'Работа / встреча', desc: 'Офис, переговоры, деловой контекст' },
+      { value: 'date', icon: '🥂', title: 'Свидание / вечер', desc: 'Особый вечер, романтичная атмосфера' },
+      { value: 'casual', icon: '☕', title: 'Прогулка / кафе', desc: 'Неспешный день, комфорт и лёгкость' },
+      { value: 'party', icon: '✨', title: 'Мероприятие / выход', desc: 'Вечеринка, событие, выход в свет' },
+    ],
+  },
+  {
+    id: 'mood',
+    label: 'Настроение',
+    text: 'Какое впечатление хотите произвести?',
+    options: [
+      { value: 'confident', icon: '👑', title: 'Уверенность', desc: 'Сильный, собранный образ' },
+      { value: 'soft', icon: '🕊️', title: 'Мягкость', desc: 'Лёгкость, открытость, тепло' },
+      { value: 'mysterious', icon: '🌙', title: 'Интрига', desc: 'Загадочность, глубина' },
+      { value: 'fresh', icon: '☀️', title: 'Свежесть', desc: 'Бодрость, естественность' },
+    ],
+  },
 ];
+
+const EVENT_LABELS = {
+  work: 'Работа / встреча',
+  date: 'Свидание / вечер',
+  casual: 'Прогулка / кафе',
+  party: 'Мероприятие / выход',
+};
+
+const MOOD_LABELS = {
+  confident: 'Уверенность',
+  soft: 'Мягкость',
+  mysterious: 'Интрига',
+  fresh: 'Свежесть',
+};
+
+const EVENT_HINTS = {
+  work: { outfit: 'Для делового контекста — лаконичный крой и сдержанные акценты.' },
+  date: { outfit: 'Для вечера — изящные детали и женственный силуэт.' },
+  casual: { outfit: 'Для прогулки — комфортные ткани и свобода движений.' },
+  party: { outfit: 'Для выхода — выразительный элемент, который запомнится.' },
+};
+
+const MOOD_HINTS = {
+  confident: { beauty: 'Чёткий контур бровей и собранная укладка усилят уверенность.' },
+  soft: { beauty: 'Мягкие румяна и нежные оттенки помады подчеркнут тепло образа.' },
+  mysterious: { beauty: 'Дымчатые глаза или тёмная помада добавят глубины.' },
+  fresh: { beauty: 'Лёгкий макияж и сияющая кожа создадут ощущение свежести.' },
+};
 
 const DEFAULT_RESULT = {
   title: 'Ваш образ',
@@ -95,7 +145,7 @@ function renderWelcome() {
     <div class="card card--quiz">
       <div class="welcome-icon">✦</div>
       <h1>Выбери идеальный образ</h1>
-      <p class="subtitle">Два шага — и мы покажем look из коллекции: классика, романтика, драматика, спорт или этника</p>
+      <p class="subtitle">Четыре коротких вопроса — и мы подберём look из коллекции с учётом стиля, палитры, повода и настроения</p>
       <button type="button" class="btn btn-primary" id="startBtn">Начать подбор</button>
     </div>
   `;
@@ -255,13 +305,17 @@ function enrichResult(result, answers = {}) {
     tags: ['#стиль', '#образ', `#${photo.folder}`],
   };
   const colorLabel = COLOR_LABELS?.[answers.colors] || '';
+  const eventLabel = EVENT_LABELS[answers.event] || '';
+  const moodLabel = MOOD_LABELS[answers.mood] || '';
+  const eventHint = EVENT_HINTS[answers.event];
+  const moodHint = MOOD_HINTS[answers.mood];
 
   return {
     ...result,
     title: profile.title || result.title,
     description: profile.description || result.description,
-    outfit: profile.outfit || result.outfit,
-    beauty: profile.beauty || result.beauty,
+    outfit: [profile.outfit, eventHint?.outfit].filter(Boolean).join(' '),
+    beauty: [profile.beauty, moodHint?.beauty].filter(Boolean).join(' '),
     accessories: profile.accessories || result.accessories,
     tags: profile.tags || result.tags,
     image: photo.image,
@@ -269,6 +323,8 @@ function enrichResult(result, answers = {}) {
     imageAlt: `${profile.title || result.title} — ${folderLabel}`,
     sourceLabel: folderLabel,
     colorLabel,
+    eventLabel,
+    moodLabel,
     styleLabel: folderLabel,
     photoFolder: photo.folder,
   };
@@ -282,9 +338,15 @@ function pickStylePhoto(answers) {
   if (!items?.length) return null;
 
   const PALETTE_INDEX = { neutral: 0, bright: 1, warm: 2, cool: 3 };
+  const EVENT_OFFSET = { work: 0, date: 1, casual: 2, party: 3 };
+  const MOOD_OFFSET = { confident: 0, soft: 1, mysterious: 2, fresh: 3 };
+
   const paletteIdx = PALETTE_INDEX[answers.colors] ?? 0;
-  const step = Math.max(1, Math.floor(items.length / 4));
-  const idx = Math.min(paletteIdx * step, items.length - 1);
+  const bucketSize = Math.max(1, Math.ceil(items.length / 4));
+  const bucketStart = Math.min(paletteIdx * bucketSize, items.length - 1);
+  const bucketLen = Math.min(bucketSize, items.length - bucketStart);
+  const shift = (EVENT_OFFSET[answers.event] ?? 0) + (MOOD_OFFSET[answers.mood] ?? 0);
+  const idx = bucketStart + (shift % bucketLen);
 
   const file = typeof items[idx] === 'string' ? items[idx] : items[idx].file;
   if (!file) return null;
@@ -317,7 +379,7 @@ function buildResultHtml(result, { forPrint = false } = {}) {
           <span class="result-badge">Ваш идеальный образ</span>
 
           <h2 class="result-title">${result.title}</h2>
-          ${result.sourceLabel ? `<p class="result-source">Стиль: ${result.styleLabel || result.sourceLabel}${result.colorLabel ? ` · ${result.colorLabel}` : ''}</p>` : ''}
+          ${result.sourceLabel ? `<p class="result-source">Стиль: ${result.styleLabel || result.sourceLabel}${result.colorLabel ? ` · ${result.colorLabel}` : ''}${result.eventLabel ? ` · ${result.eventLabel}` : ''}${result.moodLabel ? ` · ${result.moodLabel}` : ''}</p>` : ''}
           <p class="result-desc">${result.description}</p>
 
           <div class="result-recommendations">
