@@ -219,11 +219,36 @@ body {
 }
 
 .welcome-logo {
-  width: clamp(110px, 28vw, 140px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.welcome-logo__frame {
+  padding: 0.5rem 1rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(221, 208, 245, 0.55) 0%, transparent 72%);
+}
+
+.welcome-logo__silhouette {
+  width: clamp(100px, 26vw, 130px);
   height: auto;
-  margin: 0 auto;
   display: block;
-  filter: drop-shadow(0 8px 24px rgba(107, 79, 154, 0.2));
+  mix-blend-mode: multiply;
+  filter: sepia(0.12) saturate(1.5) hue-rotate(235deg) brightness(0.82);
+}
+
+.welcome-logo__text {
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 4vw, 1.65rem);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  background: var(--gradient-main);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .card h1 {

@@ -144,7 +144,12 @@ function renderWelcome() {
   app.innerHTML = `
     <div class="card card--quiz">
       <div class="welcome-brand">
-        <img src="images/logo.svg" alt="StyleLab" class="welcome-logo" width="140" height="140">
+        <div class="welcome-logo">
+          <div class="welcome-logo__frame">
+            <img src="images/logo-silhouette.png" alt="" class="welcome-logo__silhouette" width="130" height="150">
+          </div>
+          <span class="welcome-logo__text">StyleLab</span>
+        </div>
       </div>
       <h1>Выбери идеальный образ</h1>
       <p class="subtitle">Четыре коротких вопроса — и мы подберём look из коллекции с учётом стиля, палитры, повода и настроения</p>
