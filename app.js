@@ -15,21 +15,22 @@ const QUESTIONS = [
     label: 'Стиль',
     text: 'Какой стиль вам ближе?',
     options: [
-      { value: 'classic', icon: '🎩', title: 'Классика', desc: 'Элегантность, лаконичность, вне времени' },
-      { value: 'romantic', icon: '🌸', title: 'Романтика', desc: 'Нежность, женственность, мягкие линии' },
-      { value: 'minimal', icon: '◻️', title: 'Минимализм', desc: 'Чистые формы, нейтральная палитра' },
-      { value: 'bold', icon: '🔥', title: 'Смелый / трендовый', desc: 'Акценты, необычные сочетания' },
+      { value: 'klassika', icon: '🎩', title: 'Классика', desc: 'Элегантность, лаконичность, вне времени' },
+      { value: 'romantika', icon: '🌸', title: 'Романтика', desc: 'Нежность, женственность, мягкие линии' },
+      { value: 'dramatik', icon: '✨', title: 'Драматика', desc: 'Выразительность, контраст, характер' },
+      { value: 'спорт', icon: '👟', title: 'Спорт', desc: 'Комфорт, динамика, активный день' },
+      { value: 'этника', icon: '🪶', title: 'Этника', desc: 'Свобода, натуральность, boho' },
     ],
   },
   {
     id: 'colors',
-    label: 'Цвета',
+    label: 'Палитра',
     text: 'Какая палитра вам откликается?',
     options: [
       { value: 'neutral', icon: '🤍', title: 'Нейтральная', desc: 'Бежевый, белый, серый, чёрный' },
-      { value: 'warm', icon: '🍂', title: 'Тёплая', desc: 'Карамель, терракота, золото' },
-      { value: 'cool', icon: '💎', title: 'Холодная', desc: 'Пудра, лаванда, серебро' },
       { value: 'bright', icon: '🌈', title: 'Яркая', desc: 'Насыщенные, контрастные оттенки' },
+      { value: 'warm', icon: '🍂', title: 'Тёплая' },
+      { value: 'cool', icon: '💎', title: 'Холодная' },
     ],
   },
   {
@@ -205,41 +206,15 @@ const state = {
 const app = document.getElementById('app');
 
 function getResultKey(answers) {
-  const { event, style, colors, mood, priority } = answers;
-
-  if (event === 'date' && (style === 'romantic' || mood === 'soft' || mood === 'mysterious')) {
-    return 'romantic-date';
-  }
-  if (style === 'classic' && (mood === 'confident' || event === 'work')) {
-    return 'classic-confident';
-  }
-  if (style === 'romantic' && mood === 'soft') {
-    return 'romantic-soft';
-  }
-  if (style === 'minimal' && (mood === 'fresh' || colors === 'neutral')) {
-    return 'minimal-fresh';
-  }
-  if (style === 'bold' || priority === 'statement' || colors === 'bright') {
-    return 'bold-statement';
-  }
-  if (event === 'casual' && priority === 'comfort') {
-    return 'casual-comfort';
-  }
-  if (mood === 'mysterious' || colors === 'cool') {
-    return 'mysterious-cool';
-  }
-  if (priority === 'quality' || priority === 'versatile') {
-    return 'versatile-quality';
-  }
-
-  const fallbackMap = {
-    work: 'classic-confident',
-    date: 'romantic-date',
-    party: 'bold-statement',
-    casual: 'casual-comfort',
+  const styleMap = {
+    klassika: 'classic-confident',
+    romantika: 'romantic-soft',
+    dramatik: 'bold-statement',
+    'спорт': 'casual-comfort',
+    'этника': 'versatile-quality',
   };
 
-  return fallbackMap[event] || 'versatile-quality';
+  return styleMap[answers.style] || 'versatile-quality';
 }
 
 function renderWelcome() {
@@ -295,7 +270,7 @@ function renderQuestion() {
             <span class="option-icon">${opt.icon}</span>
             <span class="option-text">
               <strong>${opt.title}</strong>
-              <span>${opt.desc}</span>
+              ${opt.desc ? `<span>${opt.desc}</span>` : ''}
             </span>
           </button>
         `).join('')}
@@ -397,6 +372,7 @@ function enrichResult(result, answers = {}) {
     return { ...result, fallbackImage: result.image };
   }
 
+  const folderLabel = STYLE_FOLDER_LABELS?.[photo.folder] || photo.folder;
   const profile = FOLDER_PROFILES[photo.folder] || {
     title: folderLabel,
     description: `Образ в стиле «${folderLabel}» — подобран по вашим ответам в квизе.`,
@@ -405,7 +381,6 @@ function enrichResult(result, answers = {}) {
     accessories: 'Выберите 1–2 акцентных аксессуара, не перегружая образ.',
     tags: ['#стиль', '#образ', `#${photo.folder}`],
   };
-  const folderLabel = STYLE_FOLDER_LABELS?.[photo.folder] || photo.folder;
   const colorLabel = COLOR_LABELS?.[answers.colors] || '';
 
   return {
@@ -426,73 +401,16 @@ function enrichResult(result, answers = {}) {
   };
 }
 
-function getPhotoFolders(answers) {
-  const { event, style, colors, mood, priority } = answers;
-
-  if (event === 'date' || event === 'party') {
-    return ['romantika'];
-  }
-
-  if (event === 'casual') {
-    if (style === 'bold' || priority === 'statement' || colors === 'bright') {
-      return ['dramatik'];
-    }
-    if (style === 'minimal' || priority === 'comfort' || mood === 'fresh') {
-      return ['спорт'];
-    }
-    if (style === 'romantic' || colors === 'warm' || mood === 'soft') {
-      return ['этника'];
-    }
-    if (style === 'classic') {
-      return ['этника', 'спорт', 'dramatik'];
-    }
-    if (mood === 'mysterious' || colors === 'cool') {
-      return ['dramatik'];
-    }
-    return ['спорт', 'этника', 'dramatik'];
-  }
-
-  if (style === 'classic') {
-    return ['klassika', 'romantika'];
-  }
-  if (style === 'romantic') {
-    return ['romantika'];
-  }
-  if (style === 'bold') {
-    return ['dramatik'];
-  }
-  if (style === 'minimal') {
-    return event === 'work' ? ['klassika'] : ['спорт', 'klassika'];
-  }
-
-  if (event === 'work') {
-    return ['klassika'];
-  }
-
-  return ['klassika', 'romantika'];
-}
-
 function pickStylePhoto(answers) {
   if (typeof STYLE_GALLERY === 'undefined') return null;
 
-  const COLOR_INDEX = { neutral: 0, warm: 1, cool: 2, bright: 3 };
+  const folder = answers.style;
+  const items = STYLE_GALLERY[folder];
+  if (!items?.length) return null;
+
+  const COLOR_INDEX = { neutral: 0, bright: 1, warm: 2, cool: 3 };
   const MOOD_OFFSET = { confident: 0, soft: 1, mysterious: 2, fresh: 3 };
   const PRIORITY_OFFSET = { comfort: 0, statement: 1, versatile: 2, quality: 3 };
-
-  const folders = getPhotoFolders(answers);
-  const pool = [];
-
-  for (const folder of folders) {
-    const items = STYLE_GALLERY[folder];
-    if (!items?.length) continue;
-    for (const item of items) {
-      const file = typeof item === 'string' ? item : item.file;
-      if (!file) continue;
-      pool.push({ file, folder });
-    }
-  }
-
-  if (!pool.length) return null;
 
   const colors = answers.colors || 'neutral';
   const mood = answers.mood || 'confident';
@@ -501,13 +419,14 @@ function pickStylePhoto(answers) {
     (COLOR_INDEX[colors] || 0)
     + (MOOD_OFFSET[mood] || 0)
     + (PRIORITY_OFFSET[priority] || 0)
-  ) % pool.length;
+  ) % items.length;
 
-  const picked = pool[idx];
+  const file = typeof items[idx] === 'string' ? items[idx] : items[idx].file;
+  if (!file) return null;
 
   return {
-    image: `images/${picked.folder}/${picked.file}`,
-    folder: picked.folder,
+    image: `images/${folder}/${file}`,
+    folder,
   };
 }
 
